@@ -1,0 +1,61 @@
+---
+version: '3.4'
+services:
+  # weaviate:
+  #   command:
+  #   - --host
+  #   - 0.0.0.0
+  #   - --port
+  #   - '8080'
+  #   - --scheme
+  #   - http
+  #   image: semitechnologies/weaviate:1.22.2
+  #   ports:
+  #   - 8080:8080
+  #   - 50051:50051
+  #   volumes:
+  #   - /var/weaviate:/var/lib/weaviate
+  #   - ./backups:/tmp/backups
+  #   restart: on-failure:0
+  #   environment:
+  #     OPENAI_APIKEY: $OPENAI_API_KEY
+  #     AZURE_APIKEY: $AZURE_API_KEY
+  #     QUERY_DEFAULTS_LIMIT: 25
+  #     AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+  #     PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+  #     DEFAULT_VECTORIZER_MODULE: 'text2vec-openai'
+  #     ENABLE_MODULES: 'text2vec-openai,text2vec-cohere,backup-filesystem'
+  #     BACKUP_FILESYSTEM_PATH: '/tmp/backups'
+  #     CLUSTER_HOSTNAME: 'node1'
+  db:
+    image: mysql:8.2
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'fair-market-db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - ./mysql:/var/lib/mysql
+  fair-market:
+    build:
+      context: ./src/client/fair-market
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./src/client/fair-market:/usr/src/app
+  fair-market-backend:
+    build:
+      context: ./src/server
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./src/server:/usr/src/app-backend
