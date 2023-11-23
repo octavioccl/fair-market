@@ -50,12 +50,21 @@ services:
       - '3000:3000'
     volumes:
       - ./src/client/fair-market:/usr/src/app
+  fair-market-admin:
+    build:
+      context: ./src/client/fair-market-admin
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./src/client/fair-market-admin:/usr/src/app-admin
   fair-market-backend:
     build:
       context: ./src/server
       dockerfile: Dockerfile
     restart: always
     ports:
-      - '3001:3001'
+      - '3002:3002'
     volumes:
       - ./src/server:/usr/src/app-backend
